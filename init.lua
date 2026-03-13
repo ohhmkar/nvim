@@ -29,4 +29,7 @@ require "autocmds"
 
 vim.schedule(function()
   require "mappings"
+  if vim.fn.argc() == 1 and vim.fn.argv(0) == "Omkar" then
+    vim.cmd("Omkar")
+  end
 end)

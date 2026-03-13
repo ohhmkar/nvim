@@ -88,6 +88,57 @@ git clone https://github.com/ohhmkar/nvim.git "$env:LOCALAPPDATA\nvim"
 
 # 3. Launch Neovim
 nvim
+
+## Windows — Step-by-step installation (detailed)
+
+Follow these steps in PowerShell (run as Administrator when needed). This uses `winget` where available; alternatively install packages manually.
+
+1. Install core tools with winget:
+
+```powershell
+winget install --id=Neovim.Neovim -e --source winget
+winget install --id=Git.Git -e --source winget
+winget install --id=NodeJS.Node -e --source winget
+winget install --id=Python.Python.3 -e --source winget
+winget install --id=BurntSushi.Ripgrep -e --source winget
+```
+
+2. Install a Nerd Font (for icons). Download and install a patched font from https://www.nerdfonts.com/ or use winget if available.
+
+3. (Optional) Install a package manager like Scoop or Chocolatey if you prefer:
+
+```powershell
+iwr -useb get.scoop.sh | iex
+scoop install gcc openssh
+```
+
+4. Clone this config into your Neovim config folder (recommended location):
+
+```powershell
+# Back up existing config if present
+if (Test-Path "$env:USERPROFILE\\.config\\nvim") { Rename-Item "$env:USERPROFILE\\.config\\nvim" "$env:USERPROFILE\\.config\\nvim.bak" -Force }
+
+# Clone repo
+git clone https://github.com/ohhmkar/nvim.git "$env:USERPROFILE\\.config\\nvim"
+```
+
+5. Ensure `nvim` is on your PATH (winget normally does this). Open a new terminal and run:
+
+```powershell
+nvim --version
+```
+
+6. Launch Neovim and let `lazy.nvim` bootstrap plugins:
+
+```powershell
+nvim
+```
+
+7. After first start, open `:Mason` and confirm/install LSP servers and formatters as needed.
+
+Notes:
+- If you prefer installing Neovim via a portable zip or MSI, ensure the `bin` folder containing `nvim.exe` is on your PATH.
+- If you put your config under `%LOCALAPPDATA%\nvim`, Neovim will also pick it up; adjust the clone destination accordingly.
 ```
 
 ---
