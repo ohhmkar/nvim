@@ -74,7 +74,7 @@ return {
           },
           footer = {
             "",
-            "  omkar's nvim — built different ⚡",
+            "  omkar's nvim",
           },
         },
       }
@@ -111,6 +111,12 @@ return {
         "rust_analyzer", -- Rust
         "bashls",        -- Bash
         "lua_ls",        -- Lua
+        "gopls",         -- Go
+        "ts_ls",         -- Typescript/JS
+        "html",          -- HTML
+        "cssls",         -- CSS
+        "jsonls",        -- JSON
+        "tailwindcss",   -- Tailwind CSS
       })
     end,
   },
@@ -128,9 +134,35 @@ return {
     config = function()
       require("mason-lspconfig").setup {
         ensure_installed = {
-          "pyright", "clangd", "rust_analyzer", "bashls", "lua_ls",
+          "pyright", "clangd", "rust_analyzer", "bashls", "lua_ls", "gopls",
+          "ts_ls", "html", "cssls", "jsonls", "tailwindcss",
         },
         automatic_installation = true,
+      }
+    end,
+  },
+
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    dependencies = { "williamboman/mason.nvim" },
+    config = function()
+      require("mason-tool-installer").setup {
+        ensure_installed = {
+          -- Python
+          "black", "isort", "debugpy",
+          -- C/C++
+          "clang-format",
+          -- Rust
+          "rustfmt",
+          -- Shell scripts
+          "shfmt",
+          -- Lua
+          "stylua",
+          -- Web Front-end & Configs
+          "prettier", "eslint_d",
+          -- Go
+          "gofmt", "goimports", "delve",
+        },
       }
     end,
   },
@@ -196,7 +228,8 @@ return {
     opts = {
       ensure_installed = {
         "c", "cpp", "rust", "python", "java",
-        "bash", "lua", "yaml", "toml", "json", "markdown",
+        "bash", "lua", "yaml", "toml", "json", "markdown", "go",
+        "javascript", "typescript", "html", "css", "tsx",
       },
     },
   },
@@ -330,15 +363,20 @@ return {
     config = function()
       require("conform").setup {
         formatters_by_ft = {
-          python = { "black", "isort" },
-          c      = { "clang_format" },
-          cpp    = { "clang_format" },
-          rust   = { "rustfmt" },
-          sh     = { "shfmt" },
-          bash   = { "shfmt" },
-          lua    = { "stylua" },
-          yaml   = { "prettier" },
-          json   = { "prettier" },
+          python     = { "black", "isort" },
+          c          = { "clang_format" },
+          cpp        = { "clang_format" },
+          rust       = { "rustfmt" },
+          sh         = { "shfmt" },
+          bash       = { "shfmt" },
+          lua        = { "stylua" },
+          yaml       = { "prettier" },
+          json       = { "prettier" },
+          go         = { "goimports", "gofmt" },
+          javascript = { "prettier" },
+          typescript = { "prettier" },
+          html       = { "prettier" },
+          css        = { "prettier" },
         },
         format_on_save = { timeout_ms = 500, lsp_fallback = true },
       }
@@ -388,6 +426,67 @@ return {
           lualine_x = { "filetype" },
           lualine_y = { "progress" },
           lualine_z = { "location" },
+  -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -- New Additions (Auto-pairs, Which-Key, Noice, Go DAP)
+  -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      require("nvim-autopairs").setup {
+        check_ts = true,
+      }
+      -- Inject autopairs into nvim-cmp to automatically add '()' after function completion
+      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+      local cmp = require("cmp")
+      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+    end,
+  },
+
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("which-key").setup()
+    end,
+  },
+
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
+    config = function()
+      require("noice").setup {
+        lsp = {
+          override = {
+            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+            ["vim.lsp.util.stylize_markdown"] = true,
+            ["cmp.entry.get_documentation"] = true,
+          },
+        },
+        presets = {
+          bottom_search = true,
+          command_palette = true,
+          long_message_to_split = true,
+          inc_rename = false,
+          lsp_doc_border = true,
+        },
+      }
+    end,
+  },
+
+  {
+    "leoluz/nvim-dap-go",
+    ft = "go",
+    dependencies = { "mfussenegger/nvim-dap" },
+    config = function()
+      require("dap-go").setup()
+    end,
+  },
+
         },
       }
     end,

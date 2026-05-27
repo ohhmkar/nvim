@@ -26,3 +26,5 @@ opt.timeoutlen     = 400
 opt.splitbelow     = true
 opt.splitright     = true
 opt.clipboard      = "unnamedplus"
+opt.modifiable     = true
+
